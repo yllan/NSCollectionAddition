@@ -27,7 +27,7 @@
     return result;
 }
 
-- (NSArray *) filterNot: (BOOL (^)(id))f
+- (NSArray *) filterNot: (BOOL (^)(id))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -88,7 +88,7 @@
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
         if (!condition(obj)) break;
-        [result addObject: obh];
+        [result addObject: obj];
     }
     return result;
 }
@@ -111,10 +111,10 @@
     NSUInteger count = [self count];
     NSUInteger idx = 0;
     for (idx = 0; idx < count; idx++) {
-        if (!condition(obj)) break;
+        if (!condition([self objectAtIndex: idx])) break;
     }
     for (; idx < count; idx++) {
-        [result addObject: obh];
+        [result addObject: [self objectAtIndex: idx]];
     }
     return result;
 }
