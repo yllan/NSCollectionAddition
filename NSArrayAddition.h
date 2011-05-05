@@ -21,5 +21,6 @@
 - (NSArray *) dropRight: (NSUInteger)n;
 - (NSArray *) dropWhile: (BOOL (^)(id))condition;
 
+- (NSArray *) reverse;
 
 @end

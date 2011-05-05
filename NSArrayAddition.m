@@ -119,4 +119,12 @@
     return result;
 }
 
+- (NSArray *) reverse
+{
+    NSMutableArray *result = [NSMutableArray array];
+    for (id obj in [self reverseObjectEnumerator]) 
+        [result addObject: obj];
+    return  result;
+}
+
 @end
