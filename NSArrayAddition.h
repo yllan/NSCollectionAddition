@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+#define ARRAY(...)  ([NSArray arrayWithObjects: __VA_ARGS__, nil])
+
 @interface NSArray (YLAddition) 
 - (NSArray *) map: (id (^)(id))f;
 - (void) foreach: (void (^)(id))f;
