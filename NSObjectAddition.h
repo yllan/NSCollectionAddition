@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSObject (YLAddition) 
+@interface NSObject (YLCollectionAddition) 
 - (id) map: (id (^)(id))f;
 - (void) foreach: (void (^)(id))f;
 - (id) filter: (BOOL (^)(id))condition;

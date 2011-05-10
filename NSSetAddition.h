@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface NSSet (YLAddition)
+@interface NSSet (YLCollectionAddition)
 - (NSSet *) map: (id (^)(id))f;
 - (void) foreach: (void (^)(id))f;
 - (NSSet *) filter: (BOOL (^)(id))condition;

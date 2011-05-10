@@ -1,7 +1,7 @@
 #import "NSObjectAddition.h"
 
 
-@implementation NSObject (YLAddition)
+@implementation NSObject (YLCollectionAddition)
 - (NSArray *) map: (id (^)(id))f
 {
     return f(self);

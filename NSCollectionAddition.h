@@ -5,4 +5,5 @@
     #import "NSArrayAddition.h"
     #import "NSSetAddition.h"
     #import "NSObjectAddition.h"
+    #import "NSDictionaryAddition.h"
 #endif

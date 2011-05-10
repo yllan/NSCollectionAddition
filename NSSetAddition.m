@@ -1,7 +1,7 @@
 #import "NSSetAddition.h"
 
 
-@implementation NSSet (YLAddition)
+@implementation NSSet (YLCollectionAddition)
 - (NSSet *) map: (id (^)(id))f
 {
     NSMutableSet *result = [NSMutableSet set];

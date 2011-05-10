@@ -2,7 +2,7 @@
 
 #define ARRAY(...)  ([NSArray arrayWithObjects: __VA_ARGS__, nil])
 
-@interface NSArray (YLAddition) 
+@interface NSArray (YLCollectionAddition) 
 - (NSArray *) map: (id (^)(id))f;
 - (void) foreach: (void (^)(id))f;
 - (NSArray *) filter: (BOOL (^)(id))condition;

@@ -1,6 +1,6 @@
 #import "NSArrayAddition.h"
 
-@implementation NSArray (YLAddition)
+@implementation NSArray (YLCollectionAddition)
 - (NSArray *) map: (id (^)(id))f
 {
     NSMutableArray *result = [NSMutableArray array];
