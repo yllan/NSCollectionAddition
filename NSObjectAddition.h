@@ -1,11 +1,3 @@
-//
-//  NSObjectAddition.h
-//  BlackDeerHole
-//
-//  Created by Yung-Luen Lan on 5/6/11.
-//  Copyright 2011 hypo. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 
 
