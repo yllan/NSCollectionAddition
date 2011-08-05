@@ -4,6 +4,8 @@
 
 @interface NSArray (YLCollectionAddition) 
 - (NSArray *) map: (id (^)(id))f;
+- (NSArray *) flatMap: (NSArray *(^)(id))f;
+
 - (void) foreach: (void (^)(id))f;
 - (NSArray *) filter: (BOOL (^)(id))condition;
 - (NSArray *) filterNot: (BOOL (^)(id))condition;

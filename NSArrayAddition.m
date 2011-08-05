@@ -12,6 +12,17 @@
     return result;
 }
 
+- (NSArray *) flatMap: (NSArray *(^)(id))f
+{
+    NSMutableArray *result = [NSMutableArray array];
+    for (id obj in self) {
+        NSArray *mapped = f(obj);
+        if (mapped) 
+            [result addObjectsFromArray: mapped];
+    }
+    return result;
+}
+
 - (void) foreach: (void (^)(id))f
 {
     for (id obj in self) f(obj);
