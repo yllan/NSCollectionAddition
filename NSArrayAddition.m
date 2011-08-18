@@ -138,4 +138,17 @@
     return  result;
 }
 
+
+- (NSArray *) grouped: (NSUInteger)size
+{
+    if (size == 0) return nil;
+    if (size >= [self count]) return ARRAY(self);
+    
+    NSMutableArray *resultArray = [NSMutableArray array];
+    for (NSUInteger index = 0; index < [self count]; index += size) {
+        [resultArray addObject: [self subarrayWithRange: NSMakeRange(index, MIN([self count] - index, size))]];
+    }
+    return resultArray;
+}
+
 @end

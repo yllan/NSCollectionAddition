@@ -25,4 +25,7 @@
 
 - (NSArray *) reverse;
 
+/* Partitions elements in fixed size array. */
+- (NSArray *) grouped: (NSUInteger)size;
+
 @end
