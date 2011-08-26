@@ -151,4 +151,69 @@
     return resultArray;
 }
 
+- (NSDictionary *) groupBy: (id (^)(id))discriminator
+{
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    for (id element in self) {
+        id key = discriminator(element);
+        NSMutableArray *sameGroup = [result objectForKey: key] ?: [NSMutableArray array];
+        [sameGroup addObject: element];
+        [result setObject: sameGroup forKey: key];
+    }
+    return result;
+}
+
+- (void) slidingWithSize: (NSUInteger)size block: (void (^)(NSArray *subArray))block
+{
+    [self slidingWithSize: size step: 1 block: block];
+}
+
+- (void) slidingWithSize: (NSUInteger)size step: (NSUInteger)step block: (void (^)(NSArray *subArray))block
+{
+    if (step == 0 || [self count] == 0) return;
+    
+    NSUInteger total = [self count];
+    NSUInteger idx = 0;
+    NSUInteger length = MIN(size, total - idx);
+
+    do {        
+        NSAutoreleasePool *pool = [NSAutoreleasePool new];
+        block([self subarrayWithRange: NSMakeRange(idx, length)]);
+        [pool drain];
+        
+        if (idx + step < total && idx + length < total) {
+            idx += step;
+            length = MIN(size, total - idx);
+        } else {
+            break;
+        }
+    } while (YES);
+}
+
+- (id) min: (NSComparisonResult (^)(id, id))comparator
+{
+    if ([self count] == 0) return nil;
+    if ([self count] == 1) return [self objectAtIndex: 0];
+    
+    id currentMin = [self objectAtIndex: 0];
+    for (id element in self) {
+        if (comparator(element, currentMin) == NSOrderedAscending) 
+            currentMin = element;
+    }
+    return currentMin;
+}
+
+- (id) max: (NSComparisonResult (^)(id, id))comparator
+{
+    if ([self count] == 0) return nil;
+    if ([self count] == 1) return [self objectAtIndex: 0];
+    
+    id currentMax = [self objectAtIndex: 0];
+    for (id element in self) {
+        if (comparator(element, currentMax) == NSOrderedDescending) 
+            currentMax = element;
+    }
+    return currentMax;
+}
+
 @end

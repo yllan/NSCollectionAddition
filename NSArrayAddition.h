@@ -27,5 +27,14 @@
 
 /* Partitions elements in fixed size array. */
 - (NSArray *) grouped: (NSUInteger)size;
+/* Partitions this into a dictionary of arrays of elements by a discriminator function. */
+- (NSDictionary *) groupBy: (id (^)(id))discriminator;
+
+/* Iterate through a sliding window of size */
+- (void) slidingWithSize: (NSUInteger)size block: (void (^)(NSArray *subArray))block;
+- (void) slidingWithSize: (NSUInteger)size step: (NSUInteger)step block: (void (^)(NSArray *subArray))block;
+
+- (id) min: (NSComparisonResult (^)(id, id))comparator;
+- (id) max: (NSComparisonResult (^)(id, id))comparator;
 
 @end
