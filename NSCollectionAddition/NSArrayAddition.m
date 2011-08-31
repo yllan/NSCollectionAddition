@@ -1,5 +1,13 @@
 #import "NSArrayAddition.h"
 
+#if __has_feature(objc_arc) == 1
+    #define AUTORELEASE_POOL_START      @autoreleasepool {
+    #define AUTORELEASE_POOL_END        }
+#else
+    #define AUTORELEASE_POOL_START      NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    #define AUTORELEASE_POOL_END        [pool drain];
+#endif
+
 @implementation NSArray (YLCollectionAddition)
 - (NSArray *) map: (id (^)(id))f
 {
@@ -84,13 +92,25 @@
 
 - (NSArray *) take: (NSUInteger)n
 {
-    if ([self count] <= n) return [[self copy] autorelease];
+    if ([self count] <= n) {
+#if __has_feature(objc_arc) == 1
+        return [self copy];
+#else
+        return [[self copy] autorelease];
+#endif
+    }
     return [self subarrayWithRange: NSMakeRange(0, n)];
 }
 
 - (NSArray *) takeRight: (NSUInteger)n
 {
-    if ([self count] <= n) return [[self copy] autorelease];
+    if ([self count] <= n) {
+#if __has_feature(objc_arc) == 1
+        return [self copy];
+#else
+        return [[self copy] autorelease];
+#endif
+    }
     return [self subarrayWithRange: NSMakeRange([self count] - n, n)];
 }
 
@@ -141,7 +161,11 @@
 
 - (NSArray *) grouped: (NSUInteger)size
 {
-    if (size == 0) return nil;
+    if (size == 0) {
+        NSException *exception = [NSException exceptionWithName: @"GroupWithZeroException" reason: @"Cannot group with zero size" userInfo: nil];
+        @throw exception;
+    }
+    if ([self count] == 0) return [NSArray array];
     if (size >= [self count]) return ARRAY(self);
     
     NSMutableArray *resultArray = [NSMutableArray array];
@@ -149,6 +173,26 @@
         [resultArray addObject: [self subarrayWithRange: NSMakeRange(index, MIN([self count] - index, size))]];
     }
     return resultArray;
+}
+
+- (void) grouped: (NSUInteger)size block: (void (^)(NSArray *groupedArray))block
+{
+    if (size == 0) {
+        NSException *exception = [NSException exceptionWithName: @"GroupWithZeroException" reason: @"Cannot group with zero size" userInfo: nil];
+        @throw exception;        
+    }
+    
+    if ([self count] == 0) return;
+    if (size >= [self count]) {
+        block(self);
+        return;
+    }
+    
+    for (NSUInteger index = 0; index < [self count]; index += size) {
+        AUTORELEASE_POOL_START
+        block([self subarrayWithRange: NSMakeRange(index, MIN([self count] - index, size))]);
+        AUTORELEASE_POOL_END
+    }
 }
 
 - (NSDictionary *) groupBy: (id (^)(id))discriminator
@@ -163,6 +207,41 @@
     return result;
 }
 
+- (NSArray *) slidingWithSize: (NSUInteger)size
+{
+    return [self slidingWithSize: size step: 1];
+}
+
+- (NSArray *) slidingWithSize: (NSUInteger)size step: (NSUInteger)step
+{
+    if (size == 0) {
+        NSException *e = [NSException exceptionWithName: @"SlideWithZeroSizeExcepition" reason: @"Cannot sliding with zero size" userInfo: nil];
+        @throw e;
+    }
+    if (step == 0) {
+        NSException *e = [NSException exceptionWithName: @"SlideWithZeroStepExcepition" reason: @"Cannot sliding with zero step" userInfo: nil];
+        @throw e;
+    }
+    
+    if ([self count] == 0) return [NSArray array];
+    
+    NSUInteger total = [self count];
+    NSUInteger idx = 0;
+    NSUInteger length = MIN(size, total - idx);
+    NSMutableArray *result = [NSMutableArray array];
+    do {        
+        [result addObject: [self subarrayWithRange: NSMakeRange(idx, length)]];
+        
+        if (idx + step < total && idx + length < total) {
+            idx += step;
+            length = MIN(size, total - idx);
+        } else {
+            break;
+        }
+    } while (YES);
+    return result;
+}
+
 - (void) slidingWithSize: (NSUInteger)size block: (void (^)(NSArray *subArray))block
 {
     [self slidingWithSize: size step: 1 block: block];
@@ -170,16 +249,25 @@
 
 - (void) slidingWithSize: (NSUInteger)size step: (NSUInteger)step block: (void (^)(NSArray *subArray))block
 {
-    if (step == 0 || [self count] == 0) return;
+    if (size == 0) {
+        NSException *e = [NSException exceptionWithName: @"SlideWithZeroSizeExcepition" reason: @"Cannot sliding with zero size" userInfo: nil];
+        @throw e;
+    }
+    if (step == 0) {
+        NSException *e = [NSException exceptionWithName: @"SlideWithZeroStepExcepition" reason: @"Cannot sliding with zero step" userInfo: nil];
+        @throw e;
+    }
+    
+    if ([self count] == 0) return;
     
     NSUInteger total = [self count];
     NSUInteger idx = 0;
     NSUInteger length = MIN(size, total - idx);
 
     do {        
-        NSAutoreleasePool *pool = [NSAutoreleasePool new];
+        AUTORELEASE_POOL_START
         block([self subarrayWithRange: NSMakeRange(idx, length)]);
-        [pool drain];
+        AUTORELEASE_POOL_END
         
         if (idx + step < total && idx + length < total) {
             idx += step;

@@ -27,9 +27,14 @@
 
 /* Partitions elements in fixed size array. */
 - (NSArray *) grouped: (NSUInteger)size;
+/* Iterate version */
+- (void) grouped: (NSUInteger)size block: (void (^)(NSArray *groupedArray))block;
 /* Partitions this into a dictionary of arrays of elements by a discriminator function. */
 - (NSDictionary *) groupBy: (id (^)(id))discriminator;
 
+/* Create an successive subarray in a sliding window of size */
+- (NSArray *) slidingWithSize: (NSUInteger)size;
+- (NSArray *) slidingWithSize: (NSUInteger)size step: (NSUInteger)step;
 /* Iterate through a sliding window of size */
 - (void) slidingWithSize: (NSUInteger)size block: (void (^)(NSArray *subArray))block;
 - (void) slidingWithSize: (NSUInteger)size step: (NSUInteger)step block: (void (^)(NSArray *subArray))block;
