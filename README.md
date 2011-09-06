@@ -83,5 +83,11 @@ You can check the [UnitTest.m](https://github.com/yllan/NSCollectionAddition/blo
 * `min:`
 * `max:`
 
+**Reduce**
+
+* `reduce:`
+* `reduceLeft:`
+* `reduceRight:`
+
 *To Be Explained*
 

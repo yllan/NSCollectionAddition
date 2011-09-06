@@ -304,4 +304,47 @@
     return currentMax;
 }
 
+// identical to reduceLeft
+- (id) reduce: (id (^)(id lastCalulatedResult, id nextElement))op
+{
+    if ([self count] == 0) {
+        NSException *e = [NSException exceptionWithName: @"ReduceWithEmptyExcepition" reason: @"Cannot reduce with empty array" userInfo: nil];
+        @throw e;
+    } else {
+        id lastCaluclatedResult = [self objectAtIndex: 0];
+        for (id element in [self drop: 1]) {
+            lastCaluclatedResult = op(lastCaluclatedResult, element);
+        }
+        return lastCaluclatedResult;
+    }
+}
+
+- (id) reduceLeft: (id (^)(id lastCalulatedResult, id nextElement))op
+{
+    if ([self count] == 0) {
+        NSException *e = [NSException exceptionWithName: @"ReduceLeftWithEmptyExcepition" reason: @"Cannot reduceLeft with empty array" userInfo: nil];
+        @throw e;
+    } else {
+        id lastCaluclatedResult = [self objectAtIndex: 0];
+        for (id element in [self drop: 1]) {
+            lastCaluclatedResult = op(lastCaluclatedResult, element);
+        }
+        return lastCaluclatedResult;
+    }
+}
+
+- (id) reduceRight: (id (^)(id nextElement, id lastCalulatedResult))op
+{
+    if ([self count] == 0) {
+        NSException *e = [NSException exceptionWithName: @"ReduceRightWithEmptyExcepition" reason: @"Cannot reduceRight with empty array" userInfo: nil];
+        @throw e;
+    } else {
+        id lastCaluclatedResult = [self lastObject];
+        for (id element in [[self dropRight: 1] reverseObjectEnumerator]) {
+            lastCaluclatedResult = op(element, lastCaluclatedResult);
+        }
+        return lastCaluclatedResult;
+    }
+}
+
 @end

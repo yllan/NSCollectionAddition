@@ -331,4 +331,43 @@
     STAssertEqualObjects([origin max: comparator], @"9", @"Find the max in the array");
 }
 
+- (void) testReduce
+{
+    STAssertThrows([[NSArray array] reduce: ^(id a, id b) { return a; }], @"reduce with empty array will throw exception.");
+    
+    STAssertEqualObjects([[NSArray arrayWithObject: @"A"] reduce: ^(id a, id b) { return a; }], @"A", @"reduce with one-element array will return the only element.");
+    
+    NSArray *origin = [NSArray arrayWithObjects: @"A", @"B", @"C", nil];
+    STAssertEqualObjects([origin reduce: ^(NSString *a, NSString *b) { return [a stringByAppendingString: b]; }], @"ABC", @"Reduces the elements of this sequence using the specified associative binary operator.");
+}
+
+- (void) testReduceLeft
+{
+    STAssertThrows([[NSArray array] reduceLeft: ^(id a, id b) { return a; }], @"reduceLeft with empty array will throw exception.");
+    
+    STAssertEqualObjects([[NSArray arrayWithObject: @"A"] reduceLeft: ^(id a, id b) { return a; }], @"A", @"reduceLeft with one-element array will return the only element.");
+    
+    NSArray *origin = [NSArray arrayWithObjects: @"A", @"B", @"C", nil];
+    NSString *(^op)(NSString *a, NSString *b) = ^(NSString *a, NSString *b) {
+        return [NSString stringWithFormat: @"(%@+%@)", a, b];
+    };
+    
+    STAssertEqualObjects([origin reduceLeft: op], @"((A+B)+C)", @"Applies a binary operator to all elements of this list, going left to right.");
+}
+
+- (void) testReduceRight
+{
+    STAssertThrows([[NSArray array] reduceRight: ^(id a, id b) { return a; }], @"reduceRight with empty array will throw exception.");
+    
+    STAssertEqualObjects([[NSArray arrayWithObject: @"A"] reduceRight: ^(id a, id b) { return a; }], @"A", @"reduceRight with one-element array will return the only element.");
+    
+    NSArray *origin = [NSArray arrayWithObjects: @"A", @"B", @"C", nil];
+    NSString *(^op)(NSString *a, NSString *b) = ^(NSString *a, NSString *b) {
+        return [NSString stringWithFormat: @"(%@+%@)", a, b];
+    };
+    
+    STAssertEqualObjects([origin reduceRight: op], @"(A+(B+C))", @"Applies a binary operator to all elements of this list, going right to left.");
+}
+
+
 @end
