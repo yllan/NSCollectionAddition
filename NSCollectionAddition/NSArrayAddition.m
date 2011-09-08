@@ -9,7 +9,7 @@
 #endif
 
 @implementation NSArray (YLCollectionAddition)
-- (NSArray *) map: (id (^)(id))f
+- (NSArray *) map: (id (^)(id element))f
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -20,7 +20,7 @@
     return result;
 }
 
-- (NSArray *) flatMap: (NSArray *(^)(id))f
+- (NSArray *) flatMap: (NSArray *(^)(id element))f
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -31,12 +31,12 @@
     return result;
 }
 
-- (void) foreach: (void (^)(id))f
+- (void) foreach: (void (^)(id element))f
 {
     for (id obj in self) f(obj);
 }
 
-- (NSArray *) filter: (BOOL (^)(id))condition
+- (NSArray *) filter: (BOOL (^)(id element))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -46,7 +46,7 @@
     return result;
 }
 
-- (NSArray *) filterNot: (BOOL (^)(id))condition
+- (NSArray *) filterNot: (BOOL (^)(id element))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -56,7 +56,7 @@
     return result;
 }
 
-- (BOOL) forAll: (BOOL (^)(id))condition
+- (BOOL) forAll: (BOOL (^)(id element))condition
 {
     for (id obj in self) {
         if (!condition(obj))
@@ -65,7 +65,7 @@
     return YES;
 }
 
-- (BOOL) exists: (BOOL (^)(id))condition
+- (BOOL) exists: (BOOL (^)(id element))condition
 {
     for (id obj in self) {
         if (condition(obj))
@@ -114,7 +114,7 @@
     return [self subarrayWithRange: NSMakeRange([self count] - n, n)];
 }
 
-- (NSArray *) takeWhile: (BOOL (^)(id))condition
+- (NSArray *) takeWhile: (BOOL (^)(id element))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
@@ -136,7 +136,7 @@
     return [self subarrayWithRange: NSMakeRange(0, [self count] - n)]; 
 }
 
-- (NSArray *) dropWhile: (BOOL (^)(id))condition
+- (NSArray *) dropWhile: (BOOL (^)(id element))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     NSUInteger count = [self count];
@@ -195,7 +195,7 @@
     }
 }
 
-- (NSDictionary *) groupBy: (id (^)(id))discriminator
+- (NSDictionary *) groupBy: (id (^)(id element))discriminator
 {
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
     for (id element in self) {
@@ -278,7 +278,7 @@
     } while (YES);
 }
 
-- (id) min: (NSComparisonResult (^)(id, id))comparator
+- (id) min: (NSComparisonResult (^)(id elementA, id elementB))comparator
 {
     if ([self count] == 0) return nil;
     if ([self count] == 1) return [self objectAtIndex: 0];
@@ -291,7 +291,7 @@
     return currentMin;
 }
 
-- (id) max: (NSComparisonResult (^)(id, id))comparator
+- (id) max: (NSComparisonResult (^)(id elementA, id elementB))comparator
 {
     if ([self count] == 0) return nil;
     if ([self count] == 1) return [self objectAtIndex: 0];

@@ -3,25 +3,25 @@
 #define ARRAY(...)  ([NSArray arrayWithObjects: __VA_ARGS__, nil])
 
 @interface NSArray (YLCollectionAddition) 
-- (NSArray *) map: (id (^)(id))f;
-- (NSArray *) flatMap: (NSArray *(^)(id))f;
+- (NSArray *) map: (id (^)(id element))f;
+- (NSArray *) flatMap: (NSArray *(^)(id element))f;
 
-- (void) foreach: (void (^)(id))f;
-- (NSArray *) filter: (BOOL (^)(id))condition;
-- (NSArray *) filterNot: (BOOL (^)(id))condition;
-- (BOOL) forAll: (BOOL (^)(id))condition;
-- (BOOL) exists: (BOOL (^)(id))condition;
+- (void) foreach: (void (^)(id element))f;
+- (NSArray *) filter: (BOOL (^)(id element))condition;
+- (NSArray *) filterNot: (BOOL (^)(id element))condition;
+- (BOOL) forAll: (BOOL (^)(id element))condition;
+- (BOOL) exists: (BOOL (^)(id element))condition;
 - (id) head;
 - (id) last;
 - (NSArray *) tail;
 
 - (NSArray *) take: (NSUInteger)n;
 - (NSArray *) takeRight: (NSUInteger)n;
-- (NSArray *) takeWhile: (BOOL (^)(id))condition;
+- (NSArray *) takeWhile: (BOOL (^)(id element))condition;
 
 - (NSArray *) drop: (NSUInteger)n;
 - (NSArray *) dropRight: (NSUInteger)n;
-- (NSArray *) dropWhile: (BOOL (^)(id))condition;
+- (NSArray *) dropWhile: (BOOL (^)(id element))condition;
 
 - (NSArray *) reverse;
 
@@ -30,7 +30,7 @@
 /* Iterate version */
 - (void) grouped: (NSUInteger)size block: (void (^)(NSArray *groupedArray))block;
 /* Partitions this into a dictionary of arrays of elements by a discriminator function. */
-- (NSDictionary *) groupBy: (id (^)(id))discriminator;
+- (NSDictionary *) groupBy: (id (^)(id element))discriminator;
 
 /* Create an successive subarray in a sliding window of size */
 - (NSArray *) slidingWithSize: (NSUInteger)size;
@@ -39,8 +39,8 @@
 - (void) slidingWithSize: (NSUInteger)size block: (void (^)(NSArray *subArray))block;
 - (void) slidingWithSize: (NSUInteger)size step: (NSUInteger)step block: (void (^)(NSArray *subArray))block;
 
-- (id) min: (NSComparisonResult (^)(id, id))comparator;
-- (id) max: (NSComparisonResult (^)(id, id))comparator;
+- (id) min: (NSComparisonResult (^)(id elementA, id elementB))comparator;
+- (id) max: (NSComparisonResult (^)(id elementA, id elementB))comparator;
 
 - (id) reduce: (id (^)(id lastCalulatedResult, id nextElement))op;
 - (id) reduceLeft: (id (^)(id lastCalulatedResult, id nextElement))op;
