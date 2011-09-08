@@ -45,4 +45,7 @@
 - (id) reduce: (id (^)(id lastCalulatedResult, id nextElement))op;
 - (id) reduceLeft: (id (^)(id lastCalulatedResult, id nextElement))op;
 - (id) reduceRight: (id (^)(id nextElement, id lastCalulatedResult))op;
+
+- (void) parForeach: (void (^)(id element))f;
+- (NSArray *) parMap: (id (^)(id element))f;
 @end

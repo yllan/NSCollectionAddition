@@ -24,24 +24,32 @@
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
+        AUTORELEASE_POOL_START
         NSArray *mapped = f(obj);
         if (mapped) 
             [result addObjectsFromArray: mapped];
+        AUTORELEASE_POOL_END
     }
     return result;
 }
 
 - (void) foreach: (void (^)(id element))f
 {
-    for (id obj in self) f(obj);
+    for (id obj in self) {
+        AUTORELEASE_POOL_START
+        f(obj);
+        AUTORELEASE_POOL_END
+    }
 }
 
 - (NSArray *) filter: (BOOL (^)(id element))condition
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
+        AUTORELEASE_POOL_START
         if (condition(obj))
             [result addObject: obj];
+        AUTORELEASE_POOL_END
     }
     return result;
 }
@@ -50,8 +58,10 @@
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
+        AUTORELEASE_POOL_START
         if (!condition(obj))
             [result addObject: obj];
+        AUTORELEASE_POOL_END
     }
     return result;
 }
@@ -59,8 +69,13 @@
 - (BOOL) forAll: (BOOL (^)(id element))condition
 {
     for (id obj in self) {
-        if (!condition(obj))
+        AUTORELEASE_POOL_START
+        BOOL passTest = condition(obj);
+        AUTORELEASE_POOL_END
+
+        if (!passTest) {
             return NO;
+        }
     }
     return YES;
 }
@@ -68,7 +83,11 @@
 - (BOOL) exists: (BOOL (^)(id element))condition
 {
     for (id obj in self) {
-        if (condition(obj))
+        AUTORELEASE_POOL_START
+        BOOL passTest = condition(obj);
+        AUTORELEASE_POOL_END
+
+        if (passTest)
             return YES;
     }
     return NO;
@@ -118,7 +137,10 @@
 {
     NSMutableArray *result = [NSMutableArray array];
     for (id obj in self) {
-        if (!condition(obj)) break;
+        AUTORELEASE_POOL_START
+        BOOL passTest = condition(obj);
+        AUTORELEASE_POOL_END
+        if (!passTest) break;
         [result addObject: obj];
     }
     return result;
@@ -142,7 +164,10 @@
     NSUInteger count = [self count];
     NSUInteger idx = 0;
     for (idx = 0; idx < count; idx++) {
-        if (!condition([self objectAtIndex: idx])) break;
+        AUTORELEASE_POOL_START
+        BOOL passTest = condition([self objectAtIndex: idx]);
+        AUTORELEASE_POOL_END
+        if (!passTest) break;
     }
     for (; idx < count; idx++) {
         [result addObject: [self objectAtIndex: idx]];
@@ -285,7 +310,10 @@
     
     id currentMin = [self objectAtIndex: 0];
     for (id element in self) {
-        if (comparator(element, currentMin) == NSOrderedAscending) 
+        AUTORELEASE_POOL_START
+        BOOL elementSmallerThanCurrentMin = (comparator(element, currentMin) == NSOrderedAscending);
+        AUTORELEASE_POOL_END
+        if (elementSmallerThanCurrentMin) 
             currentMin = element;
     }
     return currentMin;
@@ -298,7 +326,10 @@
     
     id currentMax = [self objectAtIndex: 0];
     for (id element in self) {
-        if (comparator(element, currentMax) == NSOrderedDescending) 
+        AUTORELEASE_POOL_START
+        BOOL elementLargerThanCurrentMax = (comparator(element, currentMax) == NSOrderedDescending);
+        AUTORELEASE_POOL_END
+        if (elementLargerThanCurrentMax) 
             currentMax = element;
     }
     return currentMax;
@@ -345,6 +376,56 @@
         }
         return lastCaluclatedResult;
     }
+}
+
+- (void) parForeach: (void (^)(id element))f
+{
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    for (id element in self) {
+        dispatch_group_async(group, queue, ^{
+            AUTORELEASE_POOL_START
+            f(element);
+            AUTORELEASE_POOL_END
+        });
+    }
+    
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    dispatch_release(group);
+}
+
+- (NSArray *) parMap: (id (^)(id element))f
+{
+    if ([self count] == 0) return [NSArray array];
+    
+    id *results = malloc(sizeof(id) * [self count]);
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    
+    NSUInteger idx = 0;
+    for (id element in self) {
+        dispatch_group_async(group, queue, ^{
+            AUTORELEASE_POOL_START
+            results[idx] = [f(element) retain];
+            AUTORELEASE_POOL_END
+        });
+        idx++;
+    }
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    dispatch_release(group);
+    
+    NSMutableArray *resultArray = [NSMutableArray array];
+    NSUInteger total = [self count];
+
+    for (idx = 0; idx < total; idx++) {
+        if (results[idx] != nil) {
+            [resultArray addObject: [results[idx] autorelease]];
+        }
+    }
+    free(results);
+    return resultArray;
 }
 
 @end

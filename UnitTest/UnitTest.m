@@ -369,5 +369,35 @@
     STAssertEqualObjects([origin reduceRight: op], @"(A+(B+C))", @"Applies a binary operator to all elements of this list, going right to left.");
 }
 
+- (void) testParForeach
+{
+    NSArray *array = [@"1,2,3,4,5,6,7,8,9,0,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z" componentsSeparatedByString: @","];
+    for (NSUInteger t = 0; t < 10; t++) {
+        NSMutableSet *result = [NSMutableSet set];
+        [array parForeach: ^(NSString *s) {
+            CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+            for (NSUInteger j = 0; CFAbsoluteTimeGetCurrent() - start < 0.1; j++) ;
+            @synchronized(self) {
+                [result addObject: s];
+            }
+        }];
+        STAssertEqualObjects([NSSet setWithArray: array], result, @"parForeach iterate all the elements with block concurrently.");
+    }
+}
+
+- (void) testParMap
+{
+    NSArray *origin = [@"a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z" componentsSeparatedByString: @","];
+    NSArray *mapped = [origin parMap: ^(NSString *s) { 
+        CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+        for (NSUInteger j = 0; CFAbsoluteTimeGetCurrent() - start < 0.5; j++) ;
+        if ([s isEqualToString: @"d"] || [s isEqualToString: @"h"])
+            return (id)nil;
+        return [s stringByAppendingString: @"1"]; 
+    }];
+    
+    NSArray *supposedResult = [@"a1,b1,c1,e1,f1,g1,i1,j1,k1,l1,m1,n1,o1,p1,q1,r1,s1,t1,u1,v1,w1,x1,y1,z1" componentsSeparatedByString: @","];
+    STAssertEqualObjects(mapped, supposedResult, @"parMap creates a new array with the results of applying block to each object concurrently.");
+}
 
 @end

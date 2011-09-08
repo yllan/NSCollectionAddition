@@ -89,5 +89,10 @@ You can check the [UnitTest.m](https://github.com/yllan/NSCollectionAddition/blo
 * `reduceLeft:`
 * `reduceRight:`
 
+**Parallel Execution**
+
+* `parForeach:`
+* `parMap:`
+
 *To Be Explained*
 
