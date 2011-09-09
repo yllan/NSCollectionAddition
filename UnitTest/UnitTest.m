@@ -423,6 +423,6 @@
     }];
     
     NSArray *supposedResult = [NSArray arrayWithObjects: @"a1", @"b1", @"b2", @"b3", @"end", nil];
-    STAssertEqualObjects(flatMapped, supposedResult, @"flatMap builds a new collection by applying a function to all elements of this list and concatenating the results.");
+    STAssertEqualObjects(flatMapped, supposedResult, @"parFlatMap builds a new collection by applying a function to all elements of this list and concatenating the results.");
 }
 @end
