@@ -48,4 +48,5 @@
 
 - (void) parForeach: (void (^)(id element))f;
 - (NSArray *) parMap: (id (^)(id element))f;
+- (NSArray *) parFlatMap: (NSArray *(^)(id element))f;
 @end

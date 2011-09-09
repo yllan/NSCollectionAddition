@@ -428,4 +428,37 @@
     return resultArray;
 }
 
+- (NSArray *) parFlatMap: (NSArray *(^)(id element))f
+{
+    if ([self count] == 0) return [NSArray array];
+    
+    id *results = malloc(sizeof(id) * [self count]);
+    
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+
+    NSUInteger idx = 0;
+    for (id element in self) {
+        dispatch_group_async(group, queue, ^{
+            AUTORELEASE_POOL_START
+            results[idx] = [f(element) retain];
+            AUTORELEASE_POOL_END
+        });
+        idx++;
+    }
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    dispatch_release(group);
+
+    NSMutableArray *resultArray = [NSMutableArray array];
+    NSUInteger total = [self count];
+    
+    for (idx = 0; idx < total; idx++) {
+        if (results[idx] != nil) {
+            [resultArray addObjectsFromArray: [results[idx] autorelease]];
+        }
+    }
+    free(results);
+    return resultArray;    
+}
+
 @end

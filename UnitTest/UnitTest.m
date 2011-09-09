@@ -376,7 +376,7 @@
         NSMutableSet *result = [NSMutableSet set];
         [array parForeach: ^(NSString *s) {
             CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
-            for (NSUInteger j = 0; CFAbsoluteTimeGetCurrent() - start < 0.1; j++) ;
+            for (NSUInteger j = 0; CFAbsoluteTimeGetCurrent() - start < 0.06; j++) ;
             @synchronized(self) {
                 [result addObject: s];
             }
@@ -400,4 +400,29 @@
     STAssertEqualObjects(mapped, supposedResult, @"parMap creates a new array with the results of applying block to each object concurrently.");
 }
 
+- (void) testParFlatMap
+{
+    NSArray *origin = [NSArray arrayWithObjects: @"a", @"b", @"c", @"d", @"e", nil];
+    NSArray *flatMapped = [origin parFlatMap: ^(id s) { 
+        
+        CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+        for (NSUInteger j = 0; CFAbsoluteTimeGetCurrent() - start < 2; j++) ;
+
+        if ([s isEqualToString: @"a"]) {
+            return [NSArray arrayWithObject: @"a1"]; // single
+        } else if ([s isEqualToString: @"b"]) {
+            return [NSArray arrayWithObjects: @"b1", @"b2", @"b3", nil]; // multiple
+        } else if ([s isEqualToString: @"c"]) {
+            return [NSArray array]; // zero
+        } else if ([s isEqualToString: @"d"]) {
+            return nil; // nil
+        } else if ([s isEqualToString: @"e"]) {
+            return [NSArray arrayWithObjects: @"end", nil];
+        }
+        return [NSArray array]; 
+    }];
+    
+    NSArray *supposedResult = [NSArray arrayWithObjects: @"a1", @"b1", @"b2", @"b3", @"end", nil];
+    STAssertEqualObjects(flatMapped, supposedResult, @"flatMap builds a new collection by applying a function to all elements of this list and concatenating the results.");
+}
 @end

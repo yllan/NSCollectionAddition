@@ -155,6 +155,7 @@
 		853FFDF1140E110500D4B6C5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = hypo;
 			};
 			buildConfigurationList = 853FFDF4140E110500D4B6C5 /* Build configuration list for PBXProject "NSCollectionAddition" */;
