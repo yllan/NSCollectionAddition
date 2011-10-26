@@ -9,4 +9,8 @@
 - (NSSet *) filterNot: (BOOL (^)(id))condition;
 - (BOOL) forAll: (BOOL (^)(id))condition;
 - (BOOL) exists: (BOOL (^)(id))condition;
+
+- (NSSet *) setByRemovingObject: (id)obj;
+- (NSSet *) setByRemovingObjectsFromSet: (NSSet *)set;
+- (NSSet *) setByRemovingObjectsFromArray: (NSArray *)array;
 @end

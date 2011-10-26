@@ -56,4 +56,25 @@
     return NO;
 }
 
+- (NSSet *) setByRemovingObject: (id)obj
+{
+    NSMutableSet *result = [self mutableCopy];
+    [result removeObject: obj];
+    return [result autorelease];
+}
+
+- (NSSet *) setByRemovingObjectsFromSet: (NSSet *)set
+{
+    NSMutableSet *result = [self mutableCopy];
+    [result minusSet: set];
+    return [result autorelease];    
+}
+
+- (NSSet *) setByRemovingObjectsFromArray: (NSArray *)array
+{
+    NSMutableSet *result = [self mutableCopy];
+    [result minusSet: [NSSet setWithArray: array]];
+    return [result autorelease];
+}
+
 @end
