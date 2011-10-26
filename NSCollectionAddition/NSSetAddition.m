@@ -1,6 +1,5 @@
 #import "NSSetAddition.h"
 
-
 @implementation NSSet (YLCollectionAddition)
 - (NSSet *) map: (id (^)(id))f
 {
@@ -58,23 +57,23 @@
 
 - (NSSet *) setByRemovingObject: (id)obj
 {
-    NSMutableSet *result = [self mutableCopy];
+    NSMutableSet *result = [NSMutableSet setWithSet: self];
     [result removeObject: obj];
-    return [result autorelease];
+    return result;
 }
 
 - (NSSet *) setByRemovingObjectsFromSet: (NSSet *)set
 {
-    NSMutableSet *result = [self mutableCopy];
+    NSMutableSet *result = [NSMutableSet setWithSet: self];
     [result minusSet: set];
-    return [result autorelease];    
+    return result;    
 }
 
 - (NSSet *) setByRemovingObjectsFromArray: (NSArray *)array
 {
-    NSMutableSet *result = [self mutableCopy];
+    NSMutableSet *result = [NSMutableSet setWithSet: self];
     [result minusSet: [NSSet setWithArray: array]];
-    return [result autorelease];
+    return result;
 }
 
 @end
