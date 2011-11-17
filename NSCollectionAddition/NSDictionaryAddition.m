@@ -1,15 +1,14 @@
 #import "NSDictionaryAddition.h"
 
-NSDictionary *_DictionaryWithIDArray(id *array, NSUInteger count)
+NSDictionary *_DictionaryWithFlatArray(NSArray *array)
 {
-    id keys[count];
-    id objs[count];
+    NSMutableArray *keys = [NSMutableArray array];
+    NSMutableArray *objs = [NSMutableArray array];
     
-    for(NSUInteger i = 0; i < count; i++)
-    {
-        keys[i] = array[i * 2];
-        objs[i] = array[i * 2 + 1];
+    for (NSUInteger i = 0; i < [array count] / 2; i++) {
+        [keys addObject: [array objectAtIndex: i * 2]];
+        [objs addObject: [array objectAtIndex: i * 2 + 1]];
     }
     
-    return [NSDictionary dictionaryWithObjects: objs forKeys: keys count: count];
+    return [NSDictionary dictionaryWithObjects: objs forKeys: keys];
 }
