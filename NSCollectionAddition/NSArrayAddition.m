@@ -398,7 +398,9 @@
     }
     
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+#if !OS_OBJECT_USE_OBJC
     dispatch_release(group);
+#endif
 }
 
 - (NSArray *) parMap: (id (^)(id element))f
@@ -427,8 +429,9 @@
         idx++;
     }
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+#if !OS_OBJECT_USE_OBJC
     dispatch_release(group);
-    
+#endif
     NSMutableArray *resultArray = [NSMutableArray array];
     NSUInteger total = [self count];
 
@@ -468,8 +471,9 @@
         idx++;
     }
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+#if !OS_OBJECT_USE_OBJC
     dispatch_release(group);
-
+#endif
     NSMutableArray *resultArray = [NSMutableArray array];
     NSUInteger total = [self count];
     
