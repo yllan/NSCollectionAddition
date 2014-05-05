@@ -12,3 +12,16 @@ NSDictionary *_DictionaryWithFlatArray(NSArray *array)
     
     return [NSDictionary dictionaryWithObjects: objs forKeys: keys];
 }
+
+@implementation NSDictionary (YLCollectionAddition)
+
+- (NSDictionary *) dictionaryByAddDictionary: (NSDictionary *)anotherDictionary
+{
+    NSMutableDictionary *result = [self mutableCopy];
+    for (NSString *key in anotherDictionary.allKeys) {
+        result[key] = anotherDictionary[key];
+    }
+    return [result copy];
+}
+
+@end
